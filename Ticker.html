@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Cryptocurrency Ticker Tape</title>
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .ticker {
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker span {
+      display: inline-block;
+      animation: tickerAnim 100s linear infinite;
+      animation-delay: -19s; /* Adjust the delay time as needed */
+    }
+    .ticker a {
+      color: white;
+      text-decoration: none;
+      margin-right: 10px;
+    }
+    .ticker:hover span {
+      animation-play-state: paused;
+    }
+
+    .separator {
+    padding-right: 25px; /* Adjust this value as desired */
+    }
+
+    @keyframes tickerAnim {
+  0%, 100% {
+    transform: translateX(100%);
+  }
+  50% {
+    transform: translateX(-100%);
+  }
+  }
+  </style>
+</head>
+<body>
+  <div class="ticker">
+    <span id="tickerData" class="ticker"></span>
+  </div>
+
+  <script>
+    const tickerDataElement = document.querySelector('#tickerData');
+    const apiUrl = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,ripple,litecoin,dogecoin,solana,tron,cardano,polkadot,uniswap,stellar,chainlink,monero,okb,filecoin,mantle,aptos,arbitrum,vechain,aave,maker,optimism,algorand,eos,tezos,kaspa,apecoin,decentraland,fantom,neo,flow,gate,kava,ecash,gala,radix,gmx,iota,sui,arweave,nexo,dash,dydx,1inch,gnosis,osmosis,loopring&vs_currencies=usd'; // Replace with your desired cryptocurrencies
+
+    async function fetchTickerData() {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      const cryptoData = Object.entries(data).map(([name, info]) => ({
+        name: name,
+        price: info.usd.toFixed(2)
+      }));
+
+      tickerDataElement.innerHTML = cryptoData.map(item => 
+      `<span class="separator">||</span><a href="#">${item.name}&nbsp;$${item.price}</a>`
+      ).join('');
+    }
+
+    fetchTickerData();
+    setTimeout(() => {
+      setInterval(fetchTickerData, 6000);
+    }, -1000); // Adjust the delay time to match the animation-delay value
+    
+  </script>
+</body>
+</html>
